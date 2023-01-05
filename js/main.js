@@ -1,11 +1,11 @@
 let fname = document.getElementById('fname'),
     lname = document.getElementById('lname'),
     email = document.getElementById('email'),
-    phone = document.getElementById('phone')
-submit = document.getElementById('submit')
+    phone = document.getElementById('phone'),
+    Search = document.getElementById('Search'),
+    submit = document.getElementById('submit')
 
-
-let arrayOfEmployes 
+let arrayOfEmployes
 
 let Mode = "create"
 
@@ -13,18 +13,15 @@ let TmpId  // temporary variable to save the employe id
 
 // let's save informations in localstorage
 
-if(localStorage.arrayOfEmployes != null){
+if (localStorage.arrayOfEmployes != null) {
     arrayOfEmployes = JSON.parse(localStorage.getItem('arrayOfEmployes'))
 }
-else{
-     arrayOfEmployes = []
+else {
+    arrayOfEmployes = []
 }
 
-
-
 submit.addEventListener('click', function (e) {
-    if(Mode === "create"){
-
+    if (Mode === "create") {
         let EmployeObject = {
             fname: fname.value,
             lname: lname.value,
@@ -37,7 +34,7 @@ submit.addEventListener('click', function (e) {
         DispayInfos()
         clearText()
     }
-    else{
+    else {
         submit.textContent = "Update"
         UpdateEmploye(TmpId)  // here we replace id with TmpId var because id is local variable
         DispayInfos()
@@ -45,6 +42,33 @@ submit.addEventListener('click', function (e) {
         Mode = "create"
     }
     e.preventDefault()
+})
+
+DispayInfos()
+
+Search.addEventListener('keyup', function(){
+    let table = ''
+    for (let index = 0; index < arrayOfEmployes.length; index++) {
+        if(Search.value.includes(arrayOfEmployes[index].fname)){
+            table += `
+            <tr>
+                <th scope="row">${index}</th>
+                <td>${arrayOfEmployes[index].fname}</td>
+                <td>${arrayOfEmployes[index].lname}</td>
+                <td>${arrayOfEmployes[index].email}</td>
+                <td>${arrayOfEmployes[index].phone}</td>
+                <td>
+                    <button class="btn btn-warning" onclick="UpdateEmploye(${index})">Edit</button>
+                    <button class="btn btn-danger" onclick="DeleteEmploye(${index})">Remove</button>
+                </td>
+            </tr>
+        `
+        document.getElementById('tbody').innerHTML = table
+        }
+        else{
+            DispayInfos()
+        }
+    }
 })
 
 function DispayInfos() {
@@ -79,6 +103,7 @@ function clearText() {
 function DeleteEmploye(id) {
     arrayOfEmployes.splice(id, 1) // deleting 
     localStorage.setItem('arrayOfEmployes', JSON.stringify(arrayOfEmployes)) // update localstorage
+    window.location.reload()
     DispayInfos() // displaying informations after deleting
 }
 
@@ -97,16 +122,18 @@ function UpdateEmploye(id) {
         email: email.value,
         phone: phone.value
     }
-       fname.value = arrayOfEmployes[id].fname
-       lname.value = arrayOfEmployes[id].lname
-       email.value = arrayOfEmployes[id].email
-       phone.value = arrayOfEmployes[id].phone
+    fname.value = arrayOfEmployes[id].fname
+    lname.value = arrayOfEmployes[id].lname
+    email.value = arrayOfEmployes[id].email
+    phone.value = arrayOfEmployes[id].phone
 
-       arrayOfEmployes[TmpId] = EmployeObject
-        localStorage.setItem('arrayOfEmployes', JSON.stringify(arrayOfEmployes))
+    arrayOfEmployes[TmpId] = EmployeObject
+    localStorage.setItem('arrayOfEmployes', JSON.stringify(arrayOfEmployes))
 }
 
 
-DispayInfos()
+
+
+
 
 
